@@ -1,4 +1,5 @@
 const Flight =require('../models/flight');
+const Ticket =require('../models/ticket');
 
 module.exports = {
     index,
@@ -9,15 +10,21 @@ module.exports = {
 
 function show(req, res) {
     Flight.findById(req.params.id, function(err, flight) {
-        res.render('flights/show', { flight });
+        
+        Ticket.find({flight: flight._id}, function(err, tickets) {
+            // Now you can pass both the flight and tickets in the res.render call
+            res.render('flights/show', { flight, tickets });     
+          });
+      
     })
 }
 
 function create(req, res) {
+    console.log(req.body)
     const flight = new Flight(req.body);
     flight.save(function(err){
+        console.log(err);
         if (err) return res.render('flights/new');
-        console.log(flight);
         res.redirect('/flights');
     });
 }
